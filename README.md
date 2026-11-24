@@ -34,10 +34,10 @@ Double-cliquez sur **`Lancer D-50 Editor.bat`** : un petit serveur local démarr
 Acceptez la demande d'accès aux appareils MIDI. Ensuite, menu ⋮ → *Installer D-50 Editor* pour
 en faire une application avec son icône (fonctionne aussi hors-ligne).
 
-### Android
-Le Web MIDI exige une adresse **HTTPS**. Le plus simple : héberger le dossier gratuitement
-(GitHub Pages, Netlify, Cloudflare Pages…), l'ouvrir dans **Chrome Android**, puis
+### Android (et Windows sans serveur local)
+Ouvrez **https://testroberto.github.io/d50-editor/** dans **Chrome Android**, puis
 ⋮ → *Ajouter à l'écran d'accueil / Installer l'application*.
+Chaque `git push` sur `main` met le site à jour automatiquement.
 Une fois installée, l'appli fonctionne hors-ligne.
 
 ## Récupérer les sons du D-50
