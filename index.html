@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>D-50 Editor</title>
+  <meta name="description" content="Éditeur / librairie / générateur de sons pour Roland D-50 / D-550 (Web MIDI)">
+  <meta name="theme-color" content="#14161a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="logo">D-50</span><span class="sub">Editor · Librarian · Generator</span></div>
+    <div class="midi-status" id="midiStatus" title="État MIDI">MIDI : non connecté</div>
+    <button class="icon-btn" id="btnSettings" aria-label="Réglages MIDI">⚙</button>
+  </header>
+
+  <section class="settings" id="settings" hidden>
+    <label>Sortie MIDI (vers D-50)<select id="selOut"></select></label>
+    <label>Entrée MIDI (depuis D-50)<select id="selIn"></select></label>
+    <label>Unit # (Device ID)<select id="selDev"></select></label>
+    <label>Canal MIDI<select id="selCh"></select></label>
+    <label class="chk"><input type="checkbox" id="chkAuto" checked> Envoi en temps réel</label>
+    <button id="btnMidiConnect">Activer le MIDI</button>
+    <p class="hint">Sur le D-50 : MIDI → <b>Exclusive ON</b>, et pour écrire en mémoire : <b>Protect OFF</b> (MIDI et Memory).</p>
+  </section>
+
+  <section class="toolbar">
+    <input id="patchName" class="name" maxlength="18" spellcheck="false" aria-label="Nom du patch">
+    <div class="btns">
+      <button id="btnSend" class="primary" title="Envoyer le patch complet dans la zone d'édition du D-50">▶ Envoyer</button>
+      <button id="btnRequest" title="Demander le patch en cours au D-50 (RQ1)">◀ Recevoir</button>
+      <button id="btnUndo" title="Annuler">↶</button>
+      <button id="btnRedo" title="Rétablir">↷</button>
+      <button id="btnInit" title="Patch d'initialisation">Init</button>
+      <span class="gen">
+        <select id="selRecipe" aria-label="Type de son"></select>
+        <input id="wild" type="range" min="0" max="100" value="30" title="Degré d'aléatoire" aria-label="Aléatoire">
+        <button id="btnGen" class="accent" title="Créer un nouveau son">✦ Créer</button>
+      </span>
+      <button id="btnOpen" title="Ouvrir un fichier .syx">Ouvrir .syx</button>
+      <button id="btnSavePatch" title="Enregistrer ce patch en .syx">Enreg. patch</button>
+      <input type="file" id="fileIn" accept=".syx,.mid,application/octet-stream" hidden>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="patch" class="active">Patch</button>
+    <button role="tab" data-tab="upper">Upper</button>
+    <button role="tab" data-tab="lower">Lower</button>
+    <button role="tab" data-tab="library">Bibliothèque</button>
+    <button role="tab" data-tab="log">MIDI</button>
+  </nav>
+
+  <main>
+    <section class="panel" id="tab-patch"></section>
+    <section class="panel" id="tab-upper" hidden></section>
+    <section class="panel" id="tab-lower" hidden></section>
+    <section class="panel" id="tab-library" hidden>
+      <div class="lib-tools">
+        <button id="btnLibLoad" title="Charger la case sélectionnée dans l'éditeur">→ Éditeur</button>
+        <button id="btnLibStore" title="Ranger le patch de l'éditeur dans la case sélectionnée">← Ranger ici</button>
+        <button id="btnLibWrite" title="Écrire la case sélectionnée dans la mémoire du D-50">Écrire case → D-50</button>
+        <button id="btnLibWriteAll" title="Envoyer les 64 patches au D-50">Banque → D-50</button>
+        <button id="btnLibImport">Importer .syx</button>
+        <button id="btnLibExport">Exporter banque .syx</button>
+        <button id="btnLibSwap" title="Échanger les cases A et B">A ⇄ B</button>
+      </div>
+      <div class="morph">
+        <span>Morphing</span>
+        <label>A <select id="morphA"></select></label>
+        <input type="range" id="morphT" min="0" max="100" value="50" aria-label="Position du morphing">
+        <label>B <select id="morphB"></select></label>
+        <button id="btnMorph" class="accent">Mélanger → éditeur</button>
+      </div>
+      <div class="bank" id="bank"></div>
+      <p class="hint">Pour récupérer la mémoire de votre D-50 : <b>DATA TRANSFER → B.Dump</b> sur le synthé (one-way) ; les données reçues remplissent cette banque automatiquement.</p>
+    </section>
+    <section class="panel" id="tab-log" hidden>
+      <div class="lib-tools"><button id="btnClearLog">Effacer</button><button id="btnPanic">All notes off</button></div>
+      <pre id="log" class="log"></pre>
+    </section>
+  </main>
+
+  <footer class="kbd-wrap">
+    <div class="kbd-ctl">
+      <button id="octDown" aria-label="Octave -">−</button>
+      <span id="octLbl">C3</span>
+      <button id="octUp" aria-label="Octave +">+</button>
+      <label>Vél. <input type="range" id="velo" min="1" max="127" value="100"></label>
+      <button id="btnKbdToggle" title="Masquer/afficher le clavier">⌨</button>
+    </div>
+    <div class="kbd" id="kbd"></div>
+  </footer>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="js/d50.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
